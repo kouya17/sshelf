@@ -18,6 +18,8 @@ export default function Layout({
         />
         <meta name="og:title" content={siteTitle} />
         <meta name="twitter:card" content="summary" />
+        <meta property="og:description" content="Searchable Shelfのページです。" />
+        <meta property="og:image" content="/logo.png" />
       </Head>
       <Navigation
         title={siteTitle}
