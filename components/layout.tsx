@@ -11,7 +11,7 @@ export default function Layout({
   return (
     <div>
       <Head>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.svg" type="/svg+xml"/>
         <meta
           name="description"
           content="Searchable Shelfのページです。"
