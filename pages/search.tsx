@@ -6,16 +6,23 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import Parts from '../components/parts'
+import { searchPart } from '../lib/demo'
+import { IPart } from '../lib/models'
 
 const Search: NextPage = () => {
   const router = useRouter()
   const { name } = router.query
-  const [parts, setaParts] = useState([])
+  const [parts, setParts] = useState<IPart[]>([])
   useEffect(() => {
-    axios.get('http://searchable-shelf.local/api/parts?name='+name)
-      .then(res => {
-        setaParts(res.data)
-      })
+    if (typeof name === 'string') {
+      axios.get('http://searchable-shelf.local/api/parts?name=' + name)
+        .then(res => {
+          setParts(res.data)
+        })
+        .catch(error => {
+          setParts(searchPart(name))
+        })
+    }
   }, [])
 
   return (

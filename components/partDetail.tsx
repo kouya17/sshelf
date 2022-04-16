@@ -1,5 +1,4 @@
 import axios from "axios";
-import { useRouter } from "next/router";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { IPart } from "../lib/models";
 
@@ -10,14 +9,16 @@ interface PartDetailProps {
 const PartDetail: FunctionComponent<PartDetailProps> = ({ part }) => {
   const [port, setPort] = useState<number>(-1)
   const [ledState, setLedState] = useState<'off' | 'on'>('off')
-  const router = useRouter()
 
   useEffect(() => {
     const getPort = async () => {
-      const res = await axios.get('http://searchable-shelf.local/api/shelfs/' + part.shelf_id)
-      setPort(res.data[0].port)
-      await axios.get('http://searchable-shelf.local/api/ports/' + res.data[0].port + '/on')
-      setLedState('on')
+      try {
+        const res = await axios.get('http://searchable-shelf.local/api/shelfs/' + part.shelf_id)
+        setPort(res.data[0].port)
+        await axios.get('http://searchable-shelf.local/api/ports/' + res.data[0].port + '/on')
+        setLedState('on')
+      } catch (error) {
+      }
     }
     getPort()
   }, [])

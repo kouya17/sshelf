@@ -1,7 +1,7 @@
 import Head from "next/head"
 import Navigation from './navigation'
 
-export const siteTitle = "Searchable Shelf"
+export const siteTitle = "SShelf"
 
 export default function Layout({
   children

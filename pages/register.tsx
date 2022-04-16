@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import { convertPartsTextToPartInfoList } from '../lib/partRegister'
 import { Shelf, PartRegisterInfo } from '../lib/models'
 import axios from 'axios'
+import { demoShelfs } from '../lib/demo'
 
 const Register: NextPage = () => {
   const [partInfoList, setPartInfoList] = useState<PartRegisterInfo[]>([])
@@ -17,8 +18,10 @@ const Register: NextPage = () => {
       .then(res => {
         setShelfList(res.data)
       })
+      .catch(error => {
+        setShelfList(demoShelfs)
+      })
   }, [])
-  const [message, setMessage] = useState("")
 
   return (
     <Layout>

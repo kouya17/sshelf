@@ -3,6 +3,7 @@ import { Shelf, PartRegisterInfo } from '../lib/models'
 import Iconbutton from '../components/iconButton'
 import TextArea from '../components/textArea'
 import axios from "axios";
+import { TailSpin } from  'react-loader-spinner'
 
 interface PartsRegisterTableProps {
   parts: PartRegisterInfo[],
@@ -12,6 +13,8 @@ interface PartsRegisterTableProps {
 
 const PartsRegisterTable: FunctionComponent<PartsRegisterTableProps> = ({ parts, shelfs, onRegist }) => {
   const [message, setMessage] = useState("")
+  const [isPushed, setIsPushed] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   return (
     <div>
@@ -53,7 +56,7 @@ const PartsRegisterTable: FunctionComponent<PartsRegisterTableProps> = ({ parts,
                     <td className="px-6 py-4">
                       <div className="relative">
                         <select className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state"
-                           onChange={(e) => parts[i].shelf_id = Number(e.target.value)}
+                          onChange={(e) => parts[i].shelf_id = Number(e.target.value)}
                         >
                           {shelfs.map((shelf) => {
                             return (
@@ -67,7 +70,7 @@ const PartsRegisterTable: FunctionComponent<PartsRegisterTableProps> = ({ parts,
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <TextArea onChange={(e) => parts[i].memo = e.target.value}/>
+                      <TextArea onChange={(e) => parts[i].memo = e.target.value} />
                     </td>
                   </tr>
                 )
@@ -79,16 +82,29 @@ const PartsRegisterTable: FunctionComponent<PartsRegisterTableProps> = ({ parts,
       <div className="flex justify-center">
         {message}
       </div>
-      <div className="flex justify-center" onClick={() => {console.log(parts)}}>
-        <Iconbutton text='登録' onClick={(e) => {
-          parts.forEach(async (part) => {
-            await axios.post('http://searchable-shelf.local/api/parts', part)
-          })
-          setMessage("登録しました！")
-          if (onRegist) {
-            onRegist()
-          }
-        }}/>
+      <div className="flex justify-center" onClick={() => { console.log(parts) }}>
+        {!isPushed &&
+          <Iconbutton text='登録' onClick={(e) => {
+            setIsPushed(true)
+            setIsLoading(true)
+            setMessage("今回も色々買いましたね。")
+            Promise.all(parts.map(async part => await axios.post('http://searchable-shelf.local/api/parts', part)))
+              .then(res => {
+                setIsLoading(false)
+                setMessage("登録に成功しました！")
+                if (onRegist) {
+                  onRegist()
+                }
+              })
+              .catch(err => {
+                setIsLoading(false)
+                setMessage("登録に失敗しました。ローカルネットワークにSShelfがありません。")
+              })
+          }} />
+        }
+        {isLoading &&
+          <TailSpin />
+        }
       </div>
     </div>
   )

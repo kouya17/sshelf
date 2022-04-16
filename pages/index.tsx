@@ -8,18 +8,22 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import Link from 'next/link'
 import { IoAdd } from "react-icons/io5";
-import { Shelf } from '../lib/models'
+import { IPart, Shelf } from '../lib/models'
 import Shelfs from '../components/shelfs'
 import { useRouter } from 'next/router'
 import AddShelf from '../components/addShelf'
+import { demoParts, demoShelfs } from '../lib/demo'
 
 const Home: NextPage = () => {
-  const [parts, setParts] = useState([])
+  const [parts, setParts] = useState<IPart[]>([])
   const [searchText, setSearchText] = useState("")
   useEffect(() => {
     axios.get('http://searchable-shelf.local/api/parts')
       .then(res => {
         setParts(res.data.slice(-3))
+      })
+      .catch(error => {
+        setParts(demoParts)
       })
   }, [])
   const [shelfList, setShelfList] = useState<Shelf[]>([])
@@ -28,9 +32,13 @@ const Home: NextPage = () => {
       .then(res => {
         setShelfList(res.data)
       })
+      .catch(error => {
+        setShelfList(demoShelfs)
+      })
   }
   const offAllLeds = () => {
     axios.get('http://searchable-shelf.local/api/ports/off')
+      .catch(error => {})
   }
   useEffect(() => {
     updateShelf()
@@ -66,6 +74,7 @@ const Home: NextPage = () => {
           .then(res => {
             updateShelf()
           })
+          .catch(error => {})
       }}/>
       <Shelfs shelfs={shelfList} />
     </Layout>
